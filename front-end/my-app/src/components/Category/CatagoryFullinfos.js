@@ -7,12 +7,12 @@ export const Categoryinfos = [
   },
   {
     title: "Discover fashion trends",
-    name: "Women's clothing",
+    name: "women's clothing",
     imgLink: "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_t.png",
   },
   {
     title: "9.9 Super Shopping Day",
-    name: "men's lothing",
+    name: "men's clothing",
     imgLink:
       "https://fakestoreapi.com/img/71YXzeOuslL._AC_UY879_t.png",
   },

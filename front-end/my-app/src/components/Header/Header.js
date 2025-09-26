@@ -1,6 +1,6 @@
 // Header.js
 import React from 'react'
-// import {Link } from 'react-router-dom';
+import {Link } from 'react-router-dom';
 import classes from "./Header.module.css"
 import LowerHeader from './LowerHeader';
 import {SlLocationPin} from "react-icons/sl"
@@ -11,9 +11,9 @@ function Header() {
     <section>
         <div className={classes.header_container}>
             <div className={classes.logo_container}>
-                <a href='/'>
+                <Link to='/'>
                     <img src='https://pngimg.com/uploads/amazon/amazon_PNG11.png' alt='Amazon Logo'/>
-                </a >
+                </Link>
             </div>
             <div className={classes.delivery}>
                 <SlLocationPin size={18}/>
@@ -34,25 +34,25 @@ function Header() {
                 <span>EN</span>
             </div>
             <div className={classes.account_container}>
-                <a href='/SignIn'>
+                <Link to='/SignIn'>
                     <p>Hello, sign in</p>
                     <span>Account & Lists</span>
-                </a>
+                </Link>
             </div>
             <div className={classes.returns_container}>
-                <a href='/orders'>
+                <Link to='/orders'>
                     <p>Returns</p>
                     <span>& Orders</span>
-                </a>
+                </Link>
             </div>
             {/* Cart */}
-            <a href='/cart'>
+            <Link to='/cart'>
             <div className={classes.cart_container}>
                 <BiCart size={30}/>
                 <span className={classes.cart_count}>0</span>
                 <span className={classes.cart_text}>Cart</span>
               </div>
-            </a >
+            </Link>
         </div>
         <LowerHeader/>
     </section>
