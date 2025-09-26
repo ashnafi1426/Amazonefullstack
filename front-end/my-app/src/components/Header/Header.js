@@ -37,7 +37,7 @@ function Header() {
                 <a href='/SignIn'>
                     <p>Hello, sign in</p>
                     <span>Account & Lists</span>
-                </a >
+                </a>
             </div>
             <div className={classes.returns_container}>
                 <a href='/orders'>

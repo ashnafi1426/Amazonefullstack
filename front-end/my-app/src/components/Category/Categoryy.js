@@ -4,7 +4,7 @@ import React from "react";
 import { Categoryinfos } from "./CatagoryFullinfos"; // ✅ Correct import
 import CategoryCard from "./CategoryCard";
 import classes from "./Catagory.module.css";
-const Category = () => {
+const Categoryy = () => {
   return (
     <section className={classes.category__container}>
       {Categoryinfos.map((info, index) => (
@@ -14,5 +14,5 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default Categoryy;
 
