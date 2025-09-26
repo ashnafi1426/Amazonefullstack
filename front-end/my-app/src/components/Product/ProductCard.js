@@ -2,16 +2,18 @@ import React from 'react';
 import classes from "./Product.module.css";
 import Rating from "@mui/material/Rating";
 import CurrencyFormat from '../CurrencyFormat/CurrencyFormat';
+import { Link } from 'react-router-dom';
 
 function ProductCard({ product }) {
-  if (!product) return null; // Prevents crash
+  if (!product) return null;
 
-  const { image, title, rating, price } = product;
+  const { id, image, title, rating, price } = product;
+
   return (
     <div className={classes.card_container}>
-      <a href="">
+      <Link to={`/products/${id}`}>  {/* ✅ Correct template literal */}
         <img src={image} alt={title} />
-      </a>
+      </Link>
       <div>
         <h3>{title}</h3>
         <div className={classes.rating}>
@@ -28,4 +30,6 @@ function ProductCard({ product }) {
 }
 
 export default ProductCard;
+
+
 

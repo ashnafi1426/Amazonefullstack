@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LayOut from "../../components/Layout/Layoutt";
+import Layout from "../../components/Layout/Layoutt";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { productUrl } from "../../Api/EndPoints";
@@ -14,8 +14,7 @@ const Results = () => {
 
   useEffect(() => {
     setisLoading(true);
-    axios
-      .get(`${productUrl}/products/category/${encodeURIComponent(categoryName)}`)
+    axios.get(`${productUrl}/products/category/${encodeURIComponent(categoryName)}`)
       .then((res) => {
         console.log(res.data)
         setresult(res.data);
@@ -28,7 +27,7 @@ const Results = () => {
   }, [categoryName]);
 
   return (
-    <LayOut>
+    <Layout>
       {isLoading ? (
         <Loader />
       ) : (
@@ -48,7 +47,7 @@ const Results = () => {
           </div>
         </section>
       )}
-    </LayOut>
+    </Layout>
   );
 };
 
