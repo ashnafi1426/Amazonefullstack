@@ -9,6 +9,9 @@ import { BiCart } from "react-icons/bi";
 import { DataContext } from '../Dataprovider/Dataprovider';
 function Header() {
     const [{basket},dispatch]=useContext(DataContext)
+const totalItem=basket?.reduce((amount,item)=>{
+    return item.amount+amount
+  },0)
     console.log(basket.length);
   return (
     <section className={classes.fixed}>
@@ -52,7 +55,7 @@ function Header() {
             <Link to='/cart'>
             <div className={classes.cart_container}>
                 <BiCart size={35}/>
-                <span className={classes.cart_count}>{basket.length}</span>
+                <span className={classes.cart_count}>{totalItem}</span>
                 <span className={classes.cart_text}>Cart</span>
               </div>
             </Link>

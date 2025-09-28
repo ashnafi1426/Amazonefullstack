@@ -67,3 +67,6 @@ background-color: var(--primary-color);
 .subtotal a:hover{
     background: var(--primary-shade);
 }
+.btn:hover svg{
+ background-color: var(--primary-color);
+}

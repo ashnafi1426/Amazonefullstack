@@ -7,7 +7,8 @@ import { DataContext } from "../Dataprovider/Dataprovider";
 import { Type } from "../../Utility/action.Type";
 
 function ProductCard({ product, flex = false, renderDesc = false, renderAdd = true }) {
-  const [, dispatch] = useContext(DataContext); // ✅ No unused variable now
+  const [state, dispatch] = useContext(DataContext);
+  const { basket = [] } = state;
 
   if (!product) return null;
 
@@ -27,13 +28,18 @@ function ProductCard({ product, flex = false, renderDesc = false, renderAdd = tr
     });
   };
 
+  // ✅ Check if item is already in the basket
+  const isInBasket = basket.some((item) => item.id === id);
+
   return (
     <div className={`${classes.card_container} ${flex ? classes.product_flexed : ""}`}>
       <div className={classes.image_container}>
         <Link to={`/products/${id}`}>
           <img src={image} alt={title} />
         </Link>
-        {renderAdd && (
+
+        {/* ✅ Show "Add to Cart" only if allowed and NOT in basket */}
+        {renderAdd && !isInBasket && (
           <button className={classes.button} onClick={handleAddToCart}>
             Add to Cart
           </button>
@@ -57,5 +63,3 @@ function ProductCard({ product, flex = false, renderDesc = false, renderAdd = tr
 }
 
 export default ProductCard;
-
-

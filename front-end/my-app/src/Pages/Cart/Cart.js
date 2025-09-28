@@ -33,14 +33,13 @@ const Cart = () => {
           <h3>Your Shopping Basket</h3>
           <hr />
           <div className={classes.cart_img}>
-            {basket?.length === 0 ? (
-              <p>Oppps ! No item in your cart</p>
-            ) : (
+            {basket?.length === 0 ?
+             (<p>Oppps ! No item in your cart</p>) : (
               basket?.map((item, i) => {
                 return(
                   <section key={item.id || i} className={classes.cart_product}>
-                    <ProductCard
-                      Product={item}
+                     <ProductCard
+                      product={item}  
                       renderDesc={true}
                       renderAdd={false}
                       flex={true}

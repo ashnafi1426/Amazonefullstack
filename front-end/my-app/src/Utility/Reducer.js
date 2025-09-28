@@ -23,7 +23,7 @@ export const reducer = (state, action) => {
       } else {
         return {
           ...state,
-          basket: state.basket.map(item =>
+          basket:  state.basket.map(item =>
             item.id === action.item.id
               ? { ...item, amount: item.amount + 1 }
               : item
