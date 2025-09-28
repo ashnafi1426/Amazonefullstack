@@ -1,15 +1,35 @@
-import React from 'react';
-// import Header from "./components/Header/Header";
-// import CarouselEffect from "./components/Carousel/CarouselEffect";
-// import Category from "./components/Category/Categoryy";
-// import Product from './components/Product/Product';
-import Routing from './Router';
+import "./App.css";
+import Routing from "./Router";
+import { useContext, useEffect } from "react";
+import { DataContext } from "./components/Dataprovider/Dataprovider";
+import { auth } from "./Utility/firebase";
+import { Type } from "./Utility/action.Type";
+
 function App() {
-  return(
-    <div className="App">
-     <Routing/>
-    </div>
+  const [{ user }, dispatch] = useContext(DataContext);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        dispatch({
+          type: Type.SET_USER,
+          user: authUser,
+        });
+      } else {
+        dispatch({
+          type: Type.SET_USER,
+          user: null,
+        });
+      }
+    });
+    return () => unsubscribe();
+  }, [dispatch]);
+
+  return (
+    <>
+      <Routing />
+    </>
   );
 }
-export default App;
 
+export default App;

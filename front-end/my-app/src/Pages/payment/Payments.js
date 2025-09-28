@@ -1,7 +1,7 @@
 import React from 'react';
 import Layoutt from '../../components/Layout/Layoutt';
 
-function Payment() {
+function Payments() {
   return (
     <Layoutt>
       <h1>Payments</h1>
@@ -9,4 +9,4 @@ function Payment() {
   );
 }
 
-export default Payment;
+export default Payments;

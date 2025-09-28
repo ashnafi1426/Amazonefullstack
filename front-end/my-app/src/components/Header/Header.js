@@ -8,7 +8,7 @@ import { BsSearch } from "react-icons/bs";
 import { BiCart } from "react-icons/bi";
 import { DataContext } from '../Dataprovider/Dataprovider';
 function Header() {
-    const [{basket},dispatch]=useContext(DataContext)
+    const [{user, basket},dispatch]=useContext(DataContext)
 const totalItem=basket?.reduce((amount,item)=>{
     return item.amount+amount
   },0)
@@ -33,14 +33,14 @@ const totalItem=basket?.reduce((amount,item)=>{
                     <option value="">All</option>
                 </select>
                 <input type='text' name='' id='' placeholder='Search Amazon'/>
-                <BsSearch size={20} />
+                <BsSearch size={38} />
             </div>
             <div className={classes.language_selector}>
                 <img src='https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-States-of-America.jpg' alt='Ethiopia flag'/>
                 <span>EN</span>
             </div>
             <div className={classes.account_container}>
-                <Link to='/SignIn'>
+                <Link to='/auths'>
                     <p>Hello, sign in</p>
                     <span>Account & Lists</span>
                 </Link>
