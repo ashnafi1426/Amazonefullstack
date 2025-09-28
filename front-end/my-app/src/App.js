@@ -5,7 +5,7 @@ import React from 'react';
 // import Product from './components/Product/Product';
 import Routing from './Router';
 function App() {
-  return (
+  return(
     <div className="App">
      <Routing/>
     </div>
