@@ -1,6 +1,6 @@
-const { setGlobalOptions } = require("firebase-functions");
-const { onRequest } = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+// const { setGlobalOptions } = require("firebase-functions");
+// const { onRequest } = require("firebase-functions/https");
+// const logger = require("firebase-functions/logger");
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -30,6 +30,10 @@ app.post("/payment/create", async (req, res) => {
     res.status(404).json({ message: "total must be greater than 0" });
   }
 });
+app.listen(5002,(err)=>{
+  if(err) throw err
+  console.log("amazone server running on port :5002,http://localhost:5002");
+})
 exports.api = onRequest(app);
 // For cost control, you can set the
 setGlobalOptions({ maxInstances: 10 });
