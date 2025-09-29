@@ -7,7 +7,6 @@ import { Type } from "./Utility/action.Type";
 
 function App() {
   const [{ user }, dispatch] = useContext(DataContext);
-
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
