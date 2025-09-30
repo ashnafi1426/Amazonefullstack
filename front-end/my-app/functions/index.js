@@ -1,12 +1,11 @@
 const { setGlobalOptions } = require("firebase-functions");
-const { onRequest } = require("firebase-functions/https");
+const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 const stripe = require("stripe")(process.env.STRIPE_KEY);
-
 const app = express();
 app.use(cors({ origin: "http://localhost:3000" }));
 
@@ -36,13 +35,4 @@ app.post("/payment/create", async (req, res) => {
 
 exports.api = onRequest(app);
 // For cost control, you can set the
-
 setGlobalOptions({ maxInstances: 10 });
-
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
