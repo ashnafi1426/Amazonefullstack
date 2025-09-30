@@ -1,12 +1,95 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
+import classes from "./payment.module.css";
+import ProductCard from "../../components/Product/ProductCard";
 import Layoutt from '../../components/Layout/Layoutt';
+import { DataContext } from '../../components/Dataprovider/Dataprovider';
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import CurrencyFormat from "../../components/CurrencyFormat/CurrencyFormat";
+import { axiosInstance } from "../../Api/axios";
+import { ClipLoader } from "react-spinners";
+import { db } from "../../Utility/firebase";
+import { doc, setDoc, collection } from "firebase/firestore"; 
+import { useNavigate } from "react-router-dom";
+import { Type } from "../../Utility/action.Type";
+const Payment = () => {
+  const [{ user, basket },dispatch] = useContext(DataContext);
+  const totalItem = basket?.reduce((amount, item) => {
+    return item.amount + amount;
+  }, 0);
+  const total = basket.reduce((amount, item) => {
+    return item.price * item.amount + amount;
+  }, 0);
 
-function Payments() {
+  const [cardError, setcardError] = useState(null);
+  const [Processing, setProcessing]= useState(false)
+  
+  const stripe = useStripe();
+  const elements = useElements();
+  const navigate = useNavigate()
+  const handelChange = (e) => {
+   // console.log(e);
+    e.error?.message ? setcardError(e.error?.message) : setcardError("");
+  };
+  const handelPayment = async (e) => {
+  };
   return (
     <Layoutt>
-      <h1>Payments</h1>
+      {/*header */}
+      <div className={classes.payment_header}>Checkout ({totalItem}) items</div>
+      {/*payment */}
+      <section className={classes.payment}>
+        <div className={classes.flex}>
+          <h3>Delivery Address</h3>
+          <div>
+            <div>{user?.email}</div>
+            <div>123 react lane</div>
+            <div>chicago, IL</div>
+          </div>
+        </div>
+        <hr />
+        <div className={classes.flex}>
+          <h3>Review items and delivery</h3>
+          <div>
+            {basket?.map((item) => (
+              <ProductCard product={item} flex={true} />
+            ))}
+          </div>
+        </div>
+        <hr />
+        <div className={classes.flex}>
+          <h3>Payment Methods</h3>
+          <div className={classes.payment__card__container}>
+            <div className={classes.payment_details}>
+              <form onSubmit={handelPayment}>
+                {cardError && (
+                  <small style={{ color: "red" }}>{cardError}</small>
+                )}
+                <CardElement onChange={handelChange} />
+                <div className={classes.payment_price}>
+                  <div>
+                    <span style={{ display: "flex", gap: "10px" }}>
+                      <p>Total Order | </p>
+                      <CurrencyFormat amount={total} />
+                    </span>
+                  </div>
+                  <button type="submit">
+                    {Processing ? (
+                      <div className={classes.loading}>
+                        <ClipLoader color="gray" size={12} />
+                        <p>please wait...</p>
+                      </div>
+                    ) : (
+                      "Pay Now"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
     </Layoutt>
   );
-}
+};
 
-export default Payments;
+export default Payment;
