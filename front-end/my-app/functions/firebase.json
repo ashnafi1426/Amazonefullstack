@@ -3,6 +3,12 @@
     "functions": {
       "port": 6010
     },
+    "firestore": {
+      "port": 8080
+    },
+    "auth": {
+      "port": 9099
+    },
     "ui": {
       "port": 6011
     },
@@ -14,4 +20,3 @@
     }
   }
 }
-
