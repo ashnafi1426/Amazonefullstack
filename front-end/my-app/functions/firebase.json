@@ -1,21 +1,19 @@
 {
+  "functions": {
+    "source": "functions"
+  },
   "emulators": {
     "functions": {
-      "host": "127.0.0.1",
-      "port": 5006
+      "port": 6001
+    },
+    "ui": {
+      "port": 6002
+    },
+    "hub": {
+      "port": 6003
+    },
+    "logging": {
+      "port": 6004
     }
-  },
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ]
-    }
-  ]
+  }
 }
