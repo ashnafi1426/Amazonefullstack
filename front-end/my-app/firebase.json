@@ -1,36 +1,11 @@
 {
   "emulators": {
-    "hub": {
-      "host": "127.0.0.1",
-      "port": 6100
-    },
-    "ui": {
-      "host": "127.0.0.1",
-      "port": 6101
-    },
-    "logging": {
-      "host": "127.0.0.1",
-      "port": 6102
-    },
     "functions": {
       "host": "127.0.0.1",
-      "port": 6103
+      "port": 5005
+    },
+    "ui": {
+      "enabled": true
     }
-  },
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint"
-      ]
-    }
-  ]
+  }
 }
