@@ -28,65 +28,71 @@ const Payment = () => {
   };
 
   const handlePayment = async (e) => {
-    e.preventDefault();
-    setProcessing(true);
+  e.preventDefault();
+  setProcessing(true);
 
-    if (!stripe || !elements) {
-      setCardError("Stripe has not loaded.");
+  if (!stripe || !elements) {
+    setCardError("Stripe has not loaded.");
+    setProcessing(false);
+    return;
+  }
+
+  try {
+    const amount = Math.round(total * 100);
+    const response = await axiosInstance.post(`/payment/create?total=${amount}`);
+    const clientSecret = response.data?.clientSecret;
+
+    console.log("🔐 Client secret:", clientSecret);
+
+    if (!clientSecret) throw new Error("Client secret not received.");
+
+    const cardElement = elements.getElement(CardElement);
+
+    const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: {
+          email: user?.email,
+          address: { postal_code: "12345" }, // optional
+        },
+      },
+    });
+
+    console.log("💰 PaymentIntent:", paymentIntent);
+    console.log("⚠️ Error:", error);
+
+    if (error) {
+      setCardError(error.message);
       setProcessing(false);
       return;
     }
 
-    try {
-      const amount = Math.round(total * 100);
-      const response = await axiosInstance.post(`/payment/create?total=${amount}`);
-      const clientSecret = response.data?.clientSecret;
-
-      if (!clientSecret) throw new Error("Client secret not received.");
-
-      const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            email: user?.email || "",
-            address: {
-              postal_code: "12345", // Replace with user input if needed
-            },
-          },
-        },
-      });
-
-      if (error) {
-        setCardError(error.message);
-        setProcessing(false);
-        return;
-      }
-
-      if (!paymentIntent) {
-        setCardError("Payment failed. No payment intent received.");
-        setProcessing(false);
-        return;
-      }
-
-      await setDoc(
-        doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
-        {
-          basket: basket,
-          amount: paymentIntent.amount,
-          created: paymentIntent.created,
-        }
-      );
-
-      dispatch({ type: Type.EMPTY_BASKET });
+    if (!paymentIntent || paymentIntent.status !== "succeeded") {
+      setCardError("Payment failed. Please try again.");
       setProcessing(false);
-      navigate("/orders", { state: { msg: "You have placed a new order." } });
-
-    } catch (error) {
-      console.error("Payment error:", error);
-      setCardError(error.message || "Something went wrong.");
-      setProcessing(false);
+      return;
     }
-  };
+
+    await setDoc(
+      doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
+      {
+        basket: basket,
+        amount: paymentIntent.amount,
+        created: paymentIntent.created,
+      }
+    );
+
+    dispatch({ type: Type.EMPTY_BASKET });
+    setProcessing(false);
+    navigate("/orders", { state: { msg: "You have placed a new order." } });
+
+  } catch (err) {
+    console.error("❌ Payment error:", err);
+    setCardError(err.message || "Something went wrong.");
+    setProcessing(false);
+  }
+};
+
 
   return (
     <Layoutt>
