@@ -21,6 +21,7 @@ app.get("/", (req, res) => {
 app.post("/payment/create", async (req, res) => {
   const total = req.query.total;
   if (total > 0) {
+    console.log("payment received ",total)
     const paymentIntent = await stripe.paymentIntents.create({
       amount: total,
       currency: "usd",
@@ -30,13 +31,11 @@ app.post("/payment/create", async (req, res) => {
       clientSecret: paymentIntent.client_secret,
     });
   } else {
-    res.status(404).json({ message: "total must be geater tahn 0" });
+    res.status(404).json({ message: "total must be geater than 0" });
   }
 });
-
 exports.api = onRequest(app);
 // For cost control, you can set the
-
 setGlobalOptions({ maxInstances: 10 });
 
 // Create and deploy your first functions

@@ -11,7 +11,7 @@ root.render(
   <React.StrictMode>
     <DataProvider reducer={reducer} initialState={initialState}>
       <BrowserRouter>
-        <App />
+        <App/>
       </BrowserRouter>
     </DataProvider>
   </React.StrictMode>
