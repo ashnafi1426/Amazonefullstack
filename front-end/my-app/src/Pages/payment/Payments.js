@@ -22,7 +22,6 @@ const Payment = () => {
 
   const [cardError, setcardError] = useState(null);
   const [Processing, setProcessing]= useState(false)
-  
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate()
@@ -30,7 +29,46 @@ const Payment = () => {
    // console.log(e);
     e.error?.message ? setcardError(e.error?.message) : setcardError("");
   };
-  const handelPayment = async (e) => {
+ const handelPayment = async (e) => {
+    e.preventDefault();
+    try {
+      setProcessing(true);
+      // 1. Create PaymentIntent from backend
+        const response = await axiosInstance.post( `/payment/create?total=${total * 100}`
+        );
+      const clientSecret = response.data?.clientSecret;
+      console.log("🔑 Client secret:", clientSecret);
+
+      // 2. Confirm payment with Stripe
+      const {paymentIntent, error} = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      });
+      if(error){
+        console.log("stripe error", error.message);
+        setcardError(error.message);
+        setProcessing(false);
+        return;
+      }
+console.log("payment succeeded" ,paymentIntent)
+await setDoc(
+  doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
+  {
+    basket: basket,
+    amount: paymentIntent.amount,
+    created: paymentIntent.created,
+  }
+);
+   //empty  the basket
+   dispatch({type:Type.EMPTY_BASKET})
+setProcessing(false);
+navigate("/orders", {state:{msg:"you have placed new order"}})
+      
+    } catch (error) {
+     console.log(error);
+      setProcessing(false);
+    }
   };
   return (
     <Layoutt>
@@ -75,7 +113,7 @@ const Payment = () => {
                   <button type="submit">
                     {Processing ? (
                       <div className={classes.loading}>
-                        <ClipLoader color="gray" size={12} />
+                          <ClipLoader color="gray" size={12} />
                         <p>please wait...</p>
                       </div>
                     ) : (
