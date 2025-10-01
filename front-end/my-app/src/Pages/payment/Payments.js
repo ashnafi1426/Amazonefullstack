@@ -11,6 +11,7 @@ import { db } from "../../Utility/firebase";
 import { doc, setDoc, collection } from "firebase/firestore"; 
 import { useNavigate } from "react-router-dom";
 import { Type } from "../../Utility/action.Type";
+import {db} from "../../Utility/firebase"
 
 const Payment = () => {
   const [{ user, basket }, dispatch] = useContext(DataContext);
@@ -71,7 +72,7 @@ const Payment = () => {
       setCardError("Payment failed. Please try again.");
       setProcessing(false);
       return;
-    }
+    } 
 
     await setDoc(
       doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
@@ -120,7 +121,6 @@ const Payment = () => {
         </div>
 
         <hr />
-
         <div className={classes.flex}>
           <h3>Payment Methods</h3>
           <div className={classes.payment__card__container}>
@@ -129,7 +129,6 @@ const Payment = () => {
                 {cardError && (
                   <small style={{ color: "red" }}>{cardError}</small>
                 )}
-                
                 <CardElement 
                   onChange={handleChange}
                   options={{
@@ -146,7 +145,6 @@ const Payment = () => {
                     hidePostalCode: false,
                   }}
                 />
-
                 <div className={classes.payment_price}>
                   <div>
                     <span style={{ display: "flex", gap: "10px" }}>
