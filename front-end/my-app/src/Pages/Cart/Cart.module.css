@@ -70,3 +70,11 @@ background-color: var(--primary-color);
 .btn:hover svg{
  background-color: var(--primary-color);
 }
+.checkout_button {
+  margin-top: 1rem;
+  padding: 10px 20px;
+  background-color: #f0c14b;
+  border: 1px solid #a88734;
+  cursor: pointer;
+  font-weight: bold;
+}

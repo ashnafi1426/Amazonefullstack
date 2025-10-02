@@ -30,59 +30,87 @@ const Payment = () => {
    // console.log(e);
     e.error?.message ? setcardError(e.error?.message) : setcardError("");
   };
-  const handelPayment = async (e) => {
-    e.preventDefault();
-    
-    try {
-      setProcessing(true);
+  const handlePayment = async (e) => {
+  e.preventDefault();
+  setProcessing(true);
 
-      // 1. Create PaymentIntent from backend
-        const response = await axiosInstance.post(
-          `/payment/create?total=${total * 100}`
-        );
- 
-
-      const clientSecret = response.data?.clientSecret;
-      console.log("🔑 Client secret:", clientSecret);
-
-      // 2. Confirm payment with Stripe
-      const {paymentIntent, error} = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          
-        },
-      });
-      if(error){
-        console.log("stripe error", error.message)
-        setcardError(error.message);
-        setProcessing(false);
-        return;
-      }
-console.log("payment succeeded" ,paymentIntent)
-
-
-await setDoc(
-  doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
-  {
-    basket: basket,
-    amount: paymentIntent.amount,
-    created: paymentIntent.created,
+  if (!stripe || !elements) {
+    setcardError("Stripe has not loaded.");
+    setProcessing(false);
+    return;
   }
-);
-   //empty  the basket
-   dispatch({type:Type.EMPTY_BASKET})
 
+  if (!user || !user.uid) {
+    setcardError("User not logged in.");
+    setProcessing(false);
+    return;
+  }
 
+  try {
+    const amount = Math.round(total * 100); // ensure it's an integer
+    const response = await axiosInstance.post(`/payment/create?total=${amount}`);
+    const clientSecret = response.data?.clientSecret;
 
-setProcessing(false);
-navigate("/orders", {state:{msg:"you have placed new order"}})
-      
-    } catch (error) {
-     console.log(error);
-      setProcessing(false);
+    if (!clientSecret) {
+      throw new Error("Client secret not received from backend.");
     }
-    
-  };
+
+    console.log("🔑 Client Secret:", clientSecret);
+
+    const cardElement = elements.getElement(CardElement);
+    const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: {
+          email: user.email,
+        },
+      },
+    });
+
+    if (error) {
+      console.error("❌ Stripe error:", error.message);
+      setcardError(error.message);
+      setProcessing(false);
+      return;
+    }
+
+    if (!paymentIntent || paymentIntent.status !== "succeeded") {
+      setcardError("Payment failed. Please try again.");
+      setProcessing(false);
+      return;
+    }
+
+    console.log("✅ Payment succeeded:", paymentIntent);
+    console.log("🧺 Basket to store:", basket);
+
+    // Firestore: Save order
+    try {
+      await setDoc(
+        doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
+        {
+          basket: basket,
+          amount: paymentIntent.amount,
+          created: paymentIntent.created,
+        }
+      );
+      console.log("📦 Order stored in Firestore");
+    } catch (firestoreError) {
+      console.error("🔥 Firestore write error:", firestoreError);
+      setcardError("Failed to store order in database.");
+      setProcessing(false);
+      return;
+    }
+
+    dispatch({ type: Type.EMPTY_BASKET });
+    setProcessing(false);
+    navigate("/orders", { state: { msg: "You have placed a new order." } });
+
+  } catch (err) {
+    console.error("💥 General error:", err);
+    setcardError(err.message || "Something went wrong.");
+    setProcessing(false);
+  }
+};
   return (
     <Layoutt>
       {/*header */}
@@ -102,7 +130,7 @@ navigate("/orders", {state:{msg:"you have placed new order"}})
           <h3>Review items and delivery</h3>
           <div>
             {basket?.map((item) => (
-              <ProductCard Product={item} flex={true} />
+              <ProductCard product={item} flex={true} />
             ))}
           </div>
         </div>
@@ -111,7 +139,7 @@ navigate("/orders", {state:{msg:"you have placed new order"}})
           <h3>Payment Methods</h3>
           <div className={classes.payment__card__container}>
             <div className={classes.payment_details}>
-              <form onSubmit={handelPayment}>
+              <form onSubmit={handlePayment}>
                 {cardError && (
                   <small style={{ color: "red" }}>{cardError}</small>
                 )}

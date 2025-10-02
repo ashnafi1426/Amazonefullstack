@@ -9,24 +9,24 @@ import { ClipLoader } from "react-spinners";
 import { DataContext } from "../../components/Dataprovider/Dataprovider";
 import classes from "./SignUp.module.css";
 import { Type } from "../../Utility/action.Type";
-const Authss= () => {
+
+const Authss = () => {
   const [email, setEmail] = useState("");
-  const [password,  setPassword] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  // console.log(password,email);
   const [loading, setLoading] = useState({
     signIn: false,
     signUp: false,
   });
+
   const [{ user }, dispatch] = useContext(DataContext);
-  console.log(user);
   const navigate = useNavigate();
   const navStateData= useLocation()
   console.log(navStateData)
+
   // SIGN IN
   const signInHandler = async (e) => {
     e.preventDefault();
-    // console.log(e.target.name)
     if (!email || !password) {
       setError("Please enter both email and password");
       return;
@@ -40,7 +40,7 @@ const Authss= () => {
         user: userInfo.user,
       });
       setLoading({ ...loading, signIn: false });
-      navigate( navStateData?.state?.redirect||"/");
+navigate(navStateData?.state?.redirect || "/");
     } catch (err) {
       if (err.code === "auth/invalid-email") {
         setError("Invalid email address");
@@ -59,19 +59,23 @@ const Authss= () => {
   const signUpHandler = async (e) => {
     e.preventDefault();
     setLoading({ ...loading, signUp: true });
-    try { const userInfo = await createUserWithEmailAndPassword(auth, email,password);
+    try {
+      const userInfo = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       dispatch({
         type: Type.SET_USER,
-        user:  userInfo.user,
+        user: userInfo.user,
       });
       setLoading({ ...loading, signUp: false });
-      navigate("/");
+ navigate(navStateData?.state?.redirect || "/");
     } catch (err) {
       setError(err.message);
       setLoading({ ...loading, signUp: false });
     }
   };
-
   return (
     <div className={classes.login_container}>
       <div className={classes.login_box}>
@@ -121,6 +125,7 @@ const Authss= () => {
             {loading.signIn ? <ClipLoader color="#000" size={15} /> : "Sign In"}
           </button>
         </form>
+
         <p className={classes.terms}>
           By continuing, you agree to Amazon's <a href="#">Conditions of Use</a>{" "}
           and <a href="#">Privacy Notice</a>.
@@ -138,6 +143,7 @@ const Authss= () => {
             "Create Your Amazon Account"
           )}
         </button>
+
         {error && (
           <small style={{ paddingTop: "5px", color: "red" }}>{error}</small>
         )}
@@ -146,4 +152,5 @@ const Authss= () => {
     </div>
   );
 };
+
 export default Authss;

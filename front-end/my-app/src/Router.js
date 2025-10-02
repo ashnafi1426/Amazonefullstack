@@ -1,3 +1,4 @@
+// App/Routing.jsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Landingg from './Pages/Landing/Landingg';
@@ -9,10 +10,9 @@ import ProductDetail from "./Pages/ProductDetail/ProductDetaill";
 import Results from "./Pages/Results/Result";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import ProtectedRout from './components/Protect/ProtectedRout';
 
-const stripePromise = loadStripe(
-  "pk_test_51SCT4T1AQfLZDOnSidCmlhM7Lr05WvegtBbuhbASIGbdznFZle43o88uW0PqBWPgvo2Jr4GHl2IQf5pa2djCxYfG000rXtQK4F"
-);
+const stripePromise = loadStripe("pk_test_51SCT4T1AQfLZDOnSidCmlhM7Lr05WvegtBbuhbASIGbdznFZle43o88uW0PqBWPgvo2Jr4GHl2IQf5pa2djCxYfG000rXtQK4F");
 
 function Routing() {
   return (
@@ -22,9 +22,11 @@ function Routing() {
       <Route
         path="/payments"
         element={
-          <Elements stripe={stripePromise}>
-            <Payment />
-          </Elements>
+          <ProtectedRout msg="You must log in to pay" redirect={"/payments"}>
+            <Elements stripe={stripePromise}>
+              <Payment />
+            </Elements>
+          </ProtectedRout>
         }
       />
       <Route path="/orders" element={<Orders />} />
