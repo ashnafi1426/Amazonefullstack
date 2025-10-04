@@ -21,12 +21,13 @@ app.get("/", (req, res) => {
 app.post("/payment/create", async (req, res) => {
   const total = req.query.total;
   if (total > 0) {
-    console.log("payment received ",total)
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: total,
-      currency: "usd",
-    });
-    console.log(paymentIntent);
+    // console.log("payment received ",total)
+const paymentIntent = await stripe.paymentIntents.create({
+  amount: total,
+  currency: "usd",
+  payment_method_types: ["card"], // <- important
+});
+    // console.log(paymentIntent);
     res.status(201).json({
       clientSecret: paymentIntent.client_secret,
     });

@@ -17,7 +17,7 @@ const stripePromise = loadStripe("pk_test_51SCT4T1AQfLZDOnSidCmlhM7Lr05WvegtBbuh
 function Routing() {
   return (
     <Routes>
-      <Route path="/" element={<Landingg />} />
+      <Route path="/" element={<Landingg/>} />
       <Route path="/auths" element={<Authss />} />
       <Route
         path="/payments"

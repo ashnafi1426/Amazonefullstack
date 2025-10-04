@@ -20,7 +20,7 @@ const Payment = () => {
     return item.price * item.amount + amount;
   }, 0);
 
-  const [cardError, setcardError] = useState(null);
+  const [cardError, setCardError] = useState(null);
   const [Processing, setProcessing]= useState(false)
   
   const stripe = useStripe();
@@ -28,34 +28,32 @@ const Payment = () => {
   const navigate = useNavigate()
   const handelChange = (e) => {
    // console.log(e);
-    e.error?.message ? setcardError(e.error?.message) : setcardError("");
+    e.error?.message ? setCardError(e.error?.message) : setCardError("");
   };
   const handlePayment = async (e) => {
   e.preventDefault();
   setProcessing(true);
 
   if (!stripe || !elements) {
-    setcardError("Stripe has not loaded.");
+    setCardError("Stripe has not loaded.");
     setProcessing(false);
     return;
   }
 
   if (!user || !user.uid) {
-    setcardError("User not logged in.");
+    setCardError("User not logged in.");
     setProcessing(false);
     return;
   }
-
   try {
     const amount = Math.round(total * 100); // ensure it's an integer
     const response = await axiosInstance.post(`/payment/create?total=${amount}`);
     const clientSecret = response.data?.clientSecret;
-
     if (!clientSecret) {
       throw new Error("Client secret not received from backend.");
     }
+    // console.log("🔑 Client Secret:", clientSecret);
 
-    console.log("🔑 Client Secret:", clientSecret);
 
     const cardElement = elements.getElement(CardElement);
     const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
@@ -66,16 +64,16 @@ const Payment = () => {
         },
       },
     });
-
     if (error) {
       console.error("❌ Stripe error:", error.message);
-      setcardError(error.message);
+      setCardError(error.message);
       setProcessing(false);
       return;
     }
+    console.log("💳 PaymentIntent Status:", paymentIntent?.status);
 
     if (!paymentIntent || paymentIntent.status !== "succeeded") {
-      setcardError("Payment failed. Please try again.");
+      setCardError("Payment failed. Please try again.");
       setProcessing(false);
       return;
     }
@@ -84,30 +82,58 @@ const Payment = () => {
     console.log("🧺 Basket to store:", basket);
 
     // Firestore: Save order
-    try {
-      await setDoc(
-        doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
-        {
-          basket: basket,
-          amount: paymentIntent.amount,
-          created: paymentIntent.created,
-        }
-      );
-      console.log("📦 Order stored in Firestore");
-    } catch (firestoreError) {
-      console.error("🔥 Firestore write error:", firestoreError);
-      setcardError("Failed to store order in database.");
-      setProcessing(false);
-      return;
-    }
+    // try {
+    //   await setDoc(
+    //     doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
+    //     {
+    //       basket: basket,
+    //       amount: paymentIntent.amount,
+    //       created: paymentIntent.created,
+    //     }
+    //   );
+    //   console.log("📦 Order stored in Firestore");
+    // } catch (firestoreError) {
+    //   console.error("🔥 Firestore write error:", firestoreError);
+    //   setCardError("Failed to store order in database.");
+    //   setProcessing(false);
+    //   return;
+    // }
 
+try {
+  if (!user || !user.uid) throw new Error("User UID is missing.");
+  if (!paymentIntent.id) throw new Error("PaymentIntent ID is missing.");
+
+  console.log("📤 Saving to Firestore", {
+    uid: user.uid,
+    paymentId: paymentIntent.id,
+    basket,
+    amount: paymentIntent.amount,
+    created: paymentIntent.created,
+  });
+
+  await setDoc(
+    doc(db, "users", user.uid, "orders", paymentIntent.id),
+    {
+      basket: basket,
+      amount: paymentIntent.amount,
+      created: paymentIntent.created,
+    }
+  );
+  console.log("✅ Order stored in Firestore");
+
+} catch (firestoreError) {
+  console.error("🔥 Firestore write error:", firestoreError);
+  setCardError("Failed to store order in database.");
+  setProcessing(false);
+  return;
+}
     dispatch({ type: Type.EMPTY_BASKET });
     setProcessing(false);
     navigate("/orders", { state: { msg: "You have placed a new order." } });
 
   } catch (err) {
-    console.error("💥 General error:", err);
-    setcardError(err.message || "Something went wrong.");
+    // console.error("💥 General error:", err);
+    setCardError(err.message || "Something went wrong.");
     setProcessing(false);
   }
 };
@@ -157,7 +183,7 @@ const Payment = () => {
                         <ClipLoader color="gray" size={12} />
                         <p>please wait...</p>
                       </div>
-                    ) : (
+                    ) : (  
                       "Pay Now"
                     )}
                   </button>
@@ -170,5 +196,4 @@ const Payment = () => {
     </Layoutt>
   );
 };
-
 export default Payment;
