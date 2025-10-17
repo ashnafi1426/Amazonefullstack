@@ -33,13 +33,11 @@ const Payment = () => {
   const handlePayment = async (e) => {
   e.preventDefault();
   setProcessing(true);
-
   if (!stripe || !elements) {
     setCardError("Stripe has not loaded.");
     setProcessing(false);
     return;
   }
-
   if (!user || !user.uid) {
     setCardError("User not logged in.");
     setProcessing(false);
@@ -71,33 +69,31 @@ const Payment = () => {
       return;
     }
     console.log("💳 PaymentIntent Status:", paymentIntent?.status);
-
     if (!paymentIntent || paymentIntent.status !== "succeeded") {
       setCardError("Payment failed. Please try again.");
       setProcessing(false);
       return;
     }
-
     console.log("✅ Payment succeeded:", paymentIntent);
     console.log("🧺 Basket to store:", basket);
 
     // Firestore: Save order
-    // try {
-    //   await setDoc(
-    //     doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
-    //     {
-    //       basket: basket,
-    //       amount: paymentIntent.amount,
-    //       created: paymentIntent.created,
-    //     }
-    //   );
-    //   console.log("📦 Order stored in Firestore");
-    // } catch (firestoreError) {
-    //   console.error("🔥 Firestore write error:", firestoreError);
-    //   setCardError("Failed to store order in database.");
-    //   setProcessing(false);
-    //   return;
-    // }
+    try {
+      await setDoc(
+        doc(collection(db, "users", user.uid, "orders"), paymentIntent.id),
+        {
+          basket: basket,
+          amount: paymentIntent.amount,
+          created: paymentIntent.created,
+        }
+      );
+      console.log("📦 Order stored in Firestore");
+    } catch (firestoreError) {
+      console.error("🔥 Firestore write error:", firestoreError);
+      setCardError("Failed to store order in database.");
+      setProcessing(false);
+      return;
+    }
 
 try {
   if (!user || !user.uid) throw new Error("User UID is missing.");
@@ -110,7 +106,6 @@ try {
     amount: paymentIntent.amount,
     created: paymentIntent.created,
   });
-
   await setDoc(
     doc(db, "users", user.uid, "orders", paymentIntent.id),
     {

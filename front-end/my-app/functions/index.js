@@ -17,11 +17,10 @@ app.get("/", (req, res) => {
     message: "success !",
   });
 });
-
 app.post("/payment/create", async (req, res) => {
   const total = req.query.total;
   if (total > 0) {
-    // console.log("payment received ",total)
+    console.log("payment received ",total)
 const paymentIntent = await stripe.paymentIntents.create({
   amount: total,
   currency: "usd",
@@ -38,11 +37,3 @@ const paymentIntent = await stripe.paymentIntents.create({
 exports.api = onRequest(app);
 // For cost control, you can set the
 setGlobalOptions({ maxInstances: 10 });
-
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });

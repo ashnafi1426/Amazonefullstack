@@ -7,6 +7,7 @@ import {SlLocationPin} from "react-icons/sl"
 import { BsSearch } from "react-icons/bs";
 import { BiCart } from "react-icons/bi";
 import { DataContext } from '../Dataprovider/Dataprovider';
+import { auth } from '../../Utility/firebase';
 function Header() {
     const [{user, basket},dispatch]=useContext(DataContext)
 const totalItem=basket?.reduce((amount,item)=>{
@@ -40,9 +41,21 @@ const totalItem=basket?.reduce((amount,item)=>{
                 <span>EN</span>
             </div>
             <div className={classes.account_container}>
-                <Link to='/auths'>
-                    <p>Hello, sign in</p>
-                    <span>Account & Lists</span>
+                <Link to={!user&&'/auths'}>
+                 <div>
+                   { user?(
+                    <>
+                <p>Hello {user?.email?.split("@")[0]}</p>
+                 <span onClick={()=>auth.signOut()}>Sign Out</span>
+                    </>
+                        ):(
+                        <>
+                        <p>Hello, Sign In</p>
+                        <span>Account and list</span>
+                        </>
+                   
+                        )}
+                </div>
                 </Link>
             </div>
             <div className={classes.returns_container}>

@@ -5,7 +5,6 @@
   height: 100vh;
   background: white;
 }
-
 .login_box {
   width: 380px;
   padding: 20px;
@@ -50,7 +49,6 @@ form button {
   cursor: pointer;
   font-weight: 600;
 }
-
  button:hover {
   background: var(--primary-shade);
 }
@@ -94,7 +92,6 @@ hr {
   font-size: 13px;
   font-weight: 600;
 }
-
 .business_link {
   font-size: 13px;
   color: #0066c0;
@@ -110,7 +107,6 @@ footer {
   font-size: 12px;
   color: #555;
 }
-
 footer a {
   color: #0066c0;
   text-decoration: none;
