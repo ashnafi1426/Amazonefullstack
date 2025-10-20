@@ -12,7 +12,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import ProtectedRout from './components/Protect/ProtectedRout';
 
-const stripePromise = loadStripe("pk_test_51SCT4H1QdpCkIvwkeUYV0USBaVb8T8rS3FWncRoQeu6xD319UmOg96VWFcxpxma2jICNh6VZz70t284T2FEQ3O4f00xrCRbMnP");
+const stripePromise = loadStripe("pk_test_51SCT4T1AQfLZDOnSidCmlhM7Lr05WvegtBbuhbASIGbdznFZle43o88uW0PqBWPgvo2Jr4GHl2IQf5pa2djCxYfG000rXtQK4F");
 
 function Routing() {
   return (

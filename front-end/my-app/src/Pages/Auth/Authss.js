@@ -14,7 +14,7 @@ const Authss = () => {
     signIn: false,
     signUp: false,
   }); 
-  const [{ user }, dispatch] = useContext(DataContext);
+  const [dispatch] = useContext(DataContext);
   const navigate = useNavigate();
   const navStateData = useLocation();
 
@@ -113,8 +113,8 @@ const Authss = () => {
 
         <p className={classes.terms}>
           By continuing, you agree to Amazon's{" "}
-          <a href="#">Conditions of Use</a> and{" "}
-          <a href="#">Privacy Notice</a>.
+          <a href="con">Conditions of Use</a> and{" "}
+          <a href="con">Privacy Notice</a>.
         </p>
 
         <button

@@ -6,7 +6,8 @@ import { auth } from "./Utility/firebase";
 import { Type } from "./Utility/action.Type";
 
 function App() {
-  const [{ user }, dispatch] = useContext(DataContext);
+  // eslint-disable-next-line no-unused-vars
+  const [_, dispatch] = useContext(DataContext); // ✅ Correct destructuring
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
@@ -24,10 +25,7 @@ function App() {
     return () => unsubscribe();
   }, [dispatch]);
 
-  return (
-    <>
-      <Routing />
-    </>
-  );
+  return <Routing />;
 }
+
 export default App;

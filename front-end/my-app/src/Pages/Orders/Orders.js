@@ -6,7 +6,7 @@ import { DataContext } from "../../components/Dataprovider/Dataprovider";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import ProductCard from "../../components/Product/ProductCard";
 const Orders = () => {
-  const [{ user }, dispatch] = useContext(DataContext);
+  const [{ user }] = useContext(DataContext);
   const [orders, setOrders] = useState([]);
   useEffect(() => {
     if (user) {
@@ -33,7 +33,7 @@ const Orders = () => {
         <div className={classes.orders__container}>
           <h2>Your Orders</h2>
           {
-            orders?.length== 0 && 
+            orders?.length===0 && 
             <div style={{padding:"20px"}}>
               You don't have orders yet.
             </div>

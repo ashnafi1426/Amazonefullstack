@@ -9,6 +9,5 @@ function Layoutt({ children }) {
     </div>
   )
 }
-
 export default Layoutt;
  

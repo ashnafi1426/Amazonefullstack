@@ -1,13 +1,12 @@
-// const { setGlobalOptions } = require("firebase-functions");
-// const { onRequest } = require("firebase-functions/https");
-// const logger = require("firebase-functions/logger");
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const { error } = require("firebase-functions/logger");
 dotenv.config();
 const stripe = require("stripe")(process.env.STRIPE_KEY);
+
 const app = express();
-app.use(cors({ origin: true}));
+app.use(cors({ origin: "http://localhost:3000" }));
 
 app.use(express.json());
 
@@ -19,29 +18,25 @@ app.get("/", (req, res) => {
 app.post("/payment/create", async (req, res) => {
   const total = req.query.total;
   if (total > 0) {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: total,
-      currency: "usd",
-    });
-    console.log(paymentIntent);
+    console.log("payment received ",total)
+const paymentIntent = await stripe.paymentIntents.create({
+  amount: total,
+  currency: "usd",
+  payment_method_types: ["card"], // <- important
+});
+    // console.log(paymentIntent);
     res.status(201).json({
       clientSecret: paymentIntent.client_secret,
     });
   } else {
-    res.status(404).json({ message: "total must be greater than 0" });
+    res.status(404).json({ message: "total must be geater than 0" });
   }
 });
-app.listen(5002,(err)=>{
-  if(err) throw err
-  console.log("amazone server running on port :5002,http://localhost:5002");
-})
-// exports.api = onRequest(app);
-// For cost control, you can set the
-// setGlobalOptions({ maxInstances: 10 });
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+app.listen(5003, (err) => {
+  if (err) {
+    console.error("❌ Server failed to start:", err);
+  } else {
+    console.log("✅ Server is running on port 5003");
+  }
+});
+// module.exports = app;

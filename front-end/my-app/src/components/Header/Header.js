@@ -9,7 +9,7 @@ import { BiCart } from "react-icons/bi";
 import { DataContext } from '../Dataprovider/Dataprovider';
 import { auth } from '../../Utility/firebase';
 function Header() {
-    const [{user, basket},dispatch]=useContext(DataContext)
+    const [{user, basket}]=useContext(DataContext)
 const totalItem=basket?.reduce((amount,item)=>{
     return item.amount+amount
   },0)
